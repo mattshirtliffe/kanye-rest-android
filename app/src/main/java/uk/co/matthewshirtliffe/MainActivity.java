@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.squareup.moshi.JsonAdapter;
@@ -23,6 +24,7 @@ public class MainActivity extends AppCompatActivity {
 
     TextView textView;
     Button button;
+    ProgressBar progressBar;
 
     Quote quote;
 
@@ -32,6 +34,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         textView = findViewById(R.id.textView);
         button = findViewById(R.id.quoteButton);
+        progressBar = findViewById(R.id.progressBar);
+
+        textView.setVisibility(View.GONE);
+        progressBar.setVisibility(View.VISIBLE);
 
 
         getQuote();
@@ -39,6 +45,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 button.setEnabled(false);
+                progressBar.setVisibility(View.VISIBLE);
+                textView.setVisibility(View.GONE);
                 getQuote();
             }
         });
@@ -46,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void getQuote() {
+
         OkHttpClient client = new OkHttpClient();
         // GET request
         Request request = new Request.Builder()
@@ -56,6 +65,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call call, IOException e) {
                 button.setEnabled(true);
+                progressBar.setVisibility(View.VISIBLE);
+                textView.setVisibility(View.GONE);
             }
 
             @Override
@@ -68,13 +79,11 @@ public class MainActivity extends AppCompatActivity {
                         @Override
                         public void run() {
                             updateUI();
-                            button.setEnabled(true);
                         }
                     });
 
                 }catch (Exception e){
                     e.printStackTrace();
-                    button.setEnabled(true);
                 }
 
             }
@@ -82,7 +91,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void updateUI() {
-
+        button.setEnabled(true);
+        textView.setVisibility(View.VISIBLE);
+        progressBar.setVisibility(View.GONE);
         textView.setText(quote.quote);
     }
 
